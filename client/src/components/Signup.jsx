@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Snackbar, Alert, CircularProgress } from '@mui/material';
 
 function Signup() {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
+  const navigate =useNavigate();
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const handleChange = (e) => {
@@ -15,7 +16,7 @@ function Signup() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5173/api/auth/signup', {
+      const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -30,6 +31,7 @@ function Signup() {
       }
 
       setSnackbar({ open: true, message: 'Signup successful!', severity: 'success' });
+      navigate('/signin')
     } catch (error) {
       setLoading(false);
       setSnackbar({ open: true, message: 'Something went wrong', severity: 'error' });
@@ -56,7 +58,7 @@ function Signup() {
               <input
                 type="text"
                 className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent placeholder-gray-500"
-                placeholder="Abdul Azees"
+                placeholder="username"
                 id="username"
                 onChange={handleChange}
               />
@@ -107,7 +109,7 @@ function Signup() {
           <p>
             Have an account?{" "}
             <Link to="/signin" className="text-blue-500 hover:underline">
-              Sign in
+              Sign In
             </Link>
           </p>
         </div>
