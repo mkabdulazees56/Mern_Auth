@@ -7,11 +7,12 @@ import { Route, Routes } from "react-router-dom";
 import Profile from "./components/Profile";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
     <>
-    <Navbar/>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />}>
           {" "}
@@ -25,11 +26,13 @@ function App() {
         <Route path="/signin" element={<Signin />}>
           {" "}
         </Route>
-        <Route path="/profile" element={<Profile />}>
-          {" "}
+        <Route element={<PrivateRoute />}>
+          <Route path="/profile" element={<Profile />}>
+            {" "}
+          </Route>
         </Route>
       </Routes>
-      <Footer/>
+      <Footer />
     </>
   );
 }
