@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Snackbar, Alert, CircularProgress } from "@mui/material";
 import { signInFailure, signInStart, signInSuccess } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import OAuth from "./Auth/OAuth";
 
 function Signin() {
   const [formData, setFormData] = useState({});
@@ -104,17 +105,8 @@ function Signin() {
                 "Sign In"
               )}
             </button>
-            <button
-              type="button"
-              className="w-full py-2 px-4 border border-gray-300 text-gray-700 font-semibold rounded-lg shadow-md bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 flex items-center justify-center"
-            >
-              <img
-                src="https://img.icons8.com/color/16/000000/google-logo.png"
-                alt="Google"
-                className="mr-2"
-              />
-              Sign In with Google
-            </button>
+            <OAuth></OAuth>
+            
           </div>
         </form>
         <div className="mt-4 text-center text-gray-600">
