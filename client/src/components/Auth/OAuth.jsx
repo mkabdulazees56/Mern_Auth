@@ -1,7 +1,6 @@
-import React from "react";
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "../../firebase";
-import { signInSuccess } from "../../redux/user/userSlice";
+import { signInSuccess } from "../../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
 
 export default function OAuth() {
@@ -18,7 +17,7 @@ export default function OAuth() {
         },
         body: JSON.stringify({
           name: result.user.displayName,
-          emai: result.user.email,
+          email: result.user.email,
           photo: result.user.photoURL,
         }),
       });
