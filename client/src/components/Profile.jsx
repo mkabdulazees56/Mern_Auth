@@ -221,7 +221,7 @@ export default function ProfilePage() {
             />
             <img
               src={
-                currentUser?.profilePicture || "https://via.placeholder.com/100"
+                formData.profilePicture || currentUser.profilePicture
               }
               alt="Profile"
               className="w-24 h-24 rounded-full object-cover cursor-pointer"
