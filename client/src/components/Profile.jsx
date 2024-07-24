@@ -1,146 +1,5 @@
-// import React, { useEffect, useRef, useState } from "react";
-// import { useSelector } from "react-redux";
-// import { app } from "../firebase";
-// import {
-//   getDownloadURL,
-//   getStorage,
-//   ref,
-//   uploadBytesResumable,
-// } from "firebase/storage";
-
-// export default function ProfilePage() {
-//   const { currentUser } = useSelector((state) => state.user);
-//   const fileRef = useRef(null);
-
-//   const [image, setImage] = useState(undefined);
-//   const [imagePercent, setImagePercent] = useState(0);
-//   const [imageError, setImageError] = useState(false);
-//   const [formData, setFormData] = useState({});
-
-
-
-//   useEffect(() => {
-//     if (image) {
-//       handleFileUpload(image);
-//     }
-//   }, [image]);
-
-//   const handleFileUpload = async (image) => {
-//     const storage = getStorage(app);
-//     const fileName = new Date().getTime() + image.name;
-//     const storageRef = ref(storage, fileName);
-//     const uploadTask = uploadBytesResumable(storageRef, image);
-
-//     uploadTask.on(
-//       "state_changed",
-//       (snapshot) => {
-//         const progress =
-//           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-//         setImagePercent(Math.round(progress));
-//       },
-//       (error) => {
-//         setImageError(true);
-//       },
-//       () => {
-//         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-//           setFormData({ ...formData, profilePicture: downloadURL });
-      
-//         });
-//       }
-//     );
-//   };
-
-//   const handleUpdate = () => {
-  
-//   };
-
-//   const handleDeleteAccount = () => {
-  
-//   };
-
-//   const handleSignOut = () => {
-   
-//   };
-
-//   return (
-//     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-4">
-//       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
-//         <h2 className="text-2xl font-bold text-center">Profile</h2>
-//         <form action="">
-//           <div className="flex justify-center p-3">
-//             <input
-//               type="file"
-//               ref={fileRef}
-//               hidden
-//               accept="image/*"
-//               onChange={(e) => setImage(e.target.files[0])}
-//             />
-//             <img
-//               src={
-//                 currentUser?.profilePicture || "https://via.placeholder.com/100"
-//               }
-//               alt="Profile"
-//               className="w-24 h-24 rounded-full object-cover"
-//               onClick={() => fileRef.current.click()}
-//             />
-//             <p className='text-sm self-center'>
-//           {imageError ? (
-//             <span className='text-red-700'>
-//               Error uploading image (file size must be less than 2 MB)
-//             </span>
-//           ) : imagePercent > 0 && imagePercent < 100 ? (
-//             <span className='text-slate-700'>{`Uploading: ${imagePercent} %`}</span>
-//           ) : imagePercent === 100 ? (
-//             <span className='text-green-700'>Image uploaded successfully</span>
-//           ) : (
-//             ''
-//           )}
-//         </p>
-//           </div>
-//           <div className="space-y-4">
-//             <input
-//               defaultValue={currentUser.username}
-//               type="text"
-//               placeholder="Username"
-//               id="username"
-//               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-//             />
-//             <input
-//               defaultValue={currentUser.email}
-//               type="email"
-//               id="email"
-//               placeholder="Email"
-//               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-//             />
-//             <input
-//               type="password"
-//               placeholder="Password"
-//               id="password"
-//               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
-//             />
-//             <button
-//               onClick={handleUpdate}
-//               className="w-full py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-//             >
-//               UPDATE
-//             </button>
-//           </div>
-//         </form>
-//         <div className="flex justify-between text-red-500">
-//           <button onClick={handleDeleteAccount} className="hover:underline">
-//             Delete Account
-//           </button>
-//           <button onClick={handleSignOut} className="hover:underline">
-//             Sign out
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
 import React, { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { app } from "../firebase";
 import {
   getDownloadURL,
@@ -148,17 +7,28 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
+  signOut,
+} from "../redux/user/userSlice";
 
 export default function ProfilePage() {
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const fileRef = useRef(null);
 
   const [image, setImage] = useState(undefined);
   const [imagePercent, setImagePercent] = useState(0);
   const [imageError, setImageError] = useState(false);
   const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   useEffect(() => {
     if (image) {
@@ -175,7 +45,8 @@ export default function ProfilePage() {
     uploadTask.on(
       "state_changed",
       (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setImagePercent(Math.round(progress));
       },
       (error) => {
@@ -194,8 +65,34 @@ export default function ProfilePage() {
     );
   };
 
-  const handleUpdate = () => {
-    // Update logic here
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(updateUserFailure(data));
+        toast.error("Something went wrong while updating the profile.");
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      dispatch(updateUserFailure(error));
+      toast.error("Something went wrong while updating the profile.");
+    }
   };
 
   const handleDeleteAccount = () => {
@@ -210,7 +107,7 @@ export default function ProfilePage() {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-4">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
         <h2 className="text-2xl font-bold text-center">Profile</h2>
-        <form action="">
+        <form onSubmit={handleSubmit}>
           <div className="flex flex-col items-center p-3">
             <input
               type="file"
@@ -220,9 +117,7 @@ export default function ProfilePage() {
               onChange={(e) => setImage(e.target.files[0])}
             />
             <img
-              src={
-                formData.profilePicture || currentUser.profilePicture
-              }
+              src={formData.profilePicture || currentUser.profilePicture}
               alt="Profile"
               className="w-24 h-24 rounded-full object-cover cursor-pointer"
               onClick={() => fileRef.current.click()}
@@ -245,7 +140,9 @@ export default function ProfilePage() {
               ) : imagePercent > 0 && imagePercent < 100 ? (
                 <span className="text-slate-700">{`Uploading: ${imagePercent}%`}</span>
               ) : imagePercent === 100 ? (
-                <span className="text-green-700">Image uploaded successfully</span>
+                <span className="text-green-700">
+                  Image uploaded successfully
+                </span>
               ) : (
                 ""
               )}
@@ -258,6 +155,7 @@ export default function ProfilePage() {
               placeholder="Username"
               id="username"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+              onChange={handleChange}
             />
             <input
               defaultValue={currentUser.email}
@@ -265,17 +163,16 @@ export default function ProfilePage() {
               id="email"
               placeholder="Email"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+              onChange={handleChange}
             />
             <input
               type="password"
               placeholder="Password"
               id="password"
               className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+              onChange={handleChange}
             />
-            <button
-              onClick={handleUpdate}
-              className="w-full py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
-            >
+            <button className="w-full py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700">
               UPDATE
             </button>
           </div>
