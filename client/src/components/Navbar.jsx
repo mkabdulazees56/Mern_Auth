@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { handleSignOut } from "../redux/auth/authActions";
 
 function Navbar() {
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   return (
     <div className="navbar bg-base-100 px-2 md:px-8">
@@ -90,10 +92,10 @@ function Navbar() {
                 </Link>
               </li>
               <li>
-                <a>Settings</a>
+                <Link to="/settings">Settings</Link>
               </li>
               <li>
-                <a>Logout</a>
+                <button onClick={() => dispatch(handleSignOut())}>Sign Out</button>
               </li>
             </ul>
           </div>

@@ -16,8 +16,8 @@ import {
   deleteUserStart,
   deleteUserSuccess,
   deleteUserFailure,
-  signOut,
 } from "../redux/user/userSlice";
+import { handleSignOut } from "../redux/auth/authActions";
 
 export default function ProfilePage() {
   const { currentUser } = useSelector((state) => state.user);
@@ -115,10 +115,6 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSignOut = () => {
-    // Sign out logic here
-  };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 p-4">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded shadow-md">
@@ -197,7 +193,7 @@ export default function ProfilePage() {
           <button onClick={handleDeleteAccount} className="hover:underline">
             Delete Account
           </button>
-          <button onClick={handleSignOut} className="hover:underline">
+          <button onClick={() => dispatch(handleSignOut())} className="hover:underline">
             Sign out
           </button>
         </div>
