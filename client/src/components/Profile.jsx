@@ -104,11 +104,14 @@ export default function ProfilePage() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(deleteUserFailure(data));
+        toast.error("Something went wrong while deleting the account.");
         return;
       }
       dispatch(deleteUserSuccess(data));
+      toast.success("Account deleted successfully");
     } catch (error) {
       dispatch(deleteUserFailure(error));
+      toast.error("Something went wrong while deleting the account.");
     }
   };
 
